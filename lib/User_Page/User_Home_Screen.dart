@@ -209,9 +209,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   Icons.search,
                 )),
             PopupMenuButton(onSelected: (value) {
-              // your logic
               setState(() {
-               // selectedItem = value;
                 print(value);
                 switch (value){
                   case 1: {selectedItem = popUpDialog(context);}
@@ -225,7 +223,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 }
 
               });
-             // print(value);
+
               Navigator.pushNamed(context, value.toString());
             }, itemBuilder: (BuildContext bc) {
               return const [
