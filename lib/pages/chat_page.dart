@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../service/database_service.dart';
 import '../widgets/message_tile.dart';
@@ -45,6 +48,25 @@ class _ChatPageState extends State<ChatPage> {
       });
     });
   }
+
+
+
+  File? _image;
+  final packer = ImagePicker();
+  Future imagegetCamera() async {
+    final pickedFile =
+    await packer.pickImage(source: ImageSource.camera, imageQuality: 40);
+    await packer.pickImage(source: ImageSource.gallery,imageQuality: 40);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('no image picked');
+      }
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +117,10 @@ class _ChatPageState extends State<ChatPage> {
                         hintText: "Message...",
                         hintStyle: TextStyle(color: Colors.white, fontSize: 16),
                         border: InputBorder.none,
-                        suffixIcon: Icon(
-                          Icons.camera_alt_outlined,
-                          color: Colors.deepOrange,
-                        ),
+                        // suffixIcon: Icon(
+                        //   Icons.camera_alt_outlined,
+                        //   color: Colors.deepOrange,
+                        // ),
                         prefixIcon: InkWell(
                             child: Icon(
                           Icons.emoji_emotions_outlined,
@@ -107,29 +129,36 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 )),
                 if (messageController.text.isEmpty)
-                  Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                        child: Icon(
-                      Icons.keyboard_voice,
-                      color: Colors.white,
-                    )),
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            imagegetCamera();
+                          },
+                          icon: Icon(
+                            Icons.camera_alt_outlined,
+                            color: Colors.deepOrange,
+                          )),
+                      Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Center(
+                            child: Icon(
+                          Icons.keyboard_voice,
+                          color: Colors.white,
+                        )),
+                      ),
+                    ],
                   )
                 else
                   Container(
                     child: Row(
                       children: [
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.camera_alt_outlined,
-                              color: Colors.deepOrange,
-                            )),
+
                         GestureDetector(
                           onTap: () {
                             sendMessage();
@@ -194,3 +223,7 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 }
+
+
+
+

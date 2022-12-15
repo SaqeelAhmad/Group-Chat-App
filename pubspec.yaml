@@ -64,7 +64,8 @@ dependencies:
   intl : any
   google_sign_in: ^5.4.2
   # emoji
-  flutter_emoji: ">= 2.0.0"
+  flutter_emoji:  any
+  image_pickers:  any
 
 dev_dependencies:
   flutter_test:
