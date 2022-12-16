@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../Utility/utility.dart';
 import '../service/database_service.dart';
 import '../widgets/message_tile.dart';
 import '../widgets/widgets.dart';
@@ -57,17 +56,7 @@ class _ChatPageState extends State<ChatPage> {
   Future imagegetCamera() async {
     final pickedFile =
     await packer.pickImage(source: ImageSource.camera, imageQuality: 40);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('no image picked');
-      }
-    });
-  }
-  Future imageGetGallery()async{
-    final pickedFile = await packer.pickImage(source:  ImageSource.gallery,imageQuality: 40);
+    await packer.pickImage(source: ImageSource.gallery,imageQuality: 40);
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
@@ -143,12 +132,13 @@ class _ChatPageState extends State<ChatPage> {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: (){
-                          imageGetGallery();
-                        },
-                        icon: Icon(Icons.image,color: Colors.deepOrange,size: 28,),
-
-                      ),
+                          onPressed: () {
+                            imagegetCamera();
+                          },
+                          icon: Icon(
+                            Icons.camera_alt_outlined,
+                            color: Colors.deepOrange,
+                          )),
                       Container(
                         height: 40,
                         width: 40,
@@ -207,9 +197,6 @@ class _ChatPageState extends State<ChatPage> {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                      // time: Utility.getHumanReadableDate(
-                       //   snapshot.data!.docs[index]['time']),
-                    time: snapshot.data.docs[index]['time'].toString(),
                       message: snapshot.data.docs[index]['message'],
                       sender: snapshot.data.docs[index]['sender'],
                       sentByMe: widget.userName ==
@@ -226,7 +213,7 @@ class _ChatPageState extends State<ChatPage> {
       Map<String, dynamic> chatMessageMap = {
         "message": messageController.text,
         "sender": widget.userName,
-        "time": DateTime.now().microsecondsSinceEpoch.toString(),
+        "time": DateTime.now().millisecondsSinceEpoch,
       };
 
       DatabaseService().sendMessage(widget.groupId, chatMessageMap);
