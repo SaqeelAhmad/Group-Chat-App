@@ -71,6 +71,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(  body: groupList(),
+
     floatingActionButton: FloatingActionButton(
     onPressed: () {
     popUpDialog(context);
@@ -167,6 +168,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   groupList() {
     return StreamBuilder(
+
       stream: groups,
       builder: (context, AsyncSnapshot snapshot) {
         // make some checks

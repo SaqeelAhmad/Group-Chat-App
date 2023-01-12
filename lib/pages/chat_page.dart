@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../service/database_service.dart';
-import '../widgets/Images_tile.dart';
 import '../widgets/message_tile.dart';
 import '../widgets/widgets.dart';
 import 'group_info.dart';
@@ -50,12 +49,14 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+
+
   File? _image;
   final packer = ImagePicker();
-
   Future imagegetCamera() async {
     final pickedFile =
-        await packer.pickImage(source: ImageSource.camera, imageQuality: 40);
+    await packer.pickImage(source: ImageSource.camera, imageQuality: 40);
+    await packer.pickImage(source: ImageSource.gallery,imageQuality: 40);
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
@@ -65,29 +66,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  Future imagegetGallery() async {
-    final pickedFile =
-        await packer.pickImage(source: ImageSource.gallery, imageQuality: 40);
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('no image picked');
-      }
-    });
-  }
 
-  final ImagePicker imagePicker = ImagePicker();
-  List<XFile>? imageFileList = [];
-
-  void selectImages() async {
-    final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
-    if (selectedImages!.isNotEmpty) {
-      imageFileList!.addAll(selectedImages);
-    }
-    print("Image List Length:" + imageFileList!.length.toString());
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,77 +93,34 @@ class _ChatPageState extends State<ChatPage> {
       body: Stack(
         children: <Widget>[
           // chat messages here
-          Padding(padding: EdgeInsets.only(bottom: 70), child: chatMessages()),
-
-          if (imageFileList!.isEmpty)
-            const Text('')
-          else
-            Container(
-              color: Colors.grey[700],
-              padding: EdgeInsets.only(left: 10, right: 10),
-              child: Column(
-                children: [
-                  Container(
-                    height: 50,
-                    color: Colors.grey[700],
-                    child: Row(
-                      children: [
-                        IconButton(onPressed: (){
-                          if (imageFileList != null){
-imageFileList == null;
-print("test");
-                           // imageFileList.value.remove(value);
-                            setState(() {
-
-                            });
-                          }
-                        }, icon: Icon(Icons.clear,color: Colors.white,size: 24,))
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 8,
-                    child: SizedBox(
-                      height: 2000,
-                      child: GridView.builder(
-                          itemCount: imageFileList!.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 1),
-                          itemBuilder: (BuildContext context, int index) {
-                            return Image.file(
-                              File(imageFileList![index].path),
-                              fit: BoxFit.cover,
-                            );
-                          }),
-                    ),
-                  ),
-                  Expanded(flex: 1, child: Container()),
-                ],
-              ),
-            ),
-
+          chatMessages(),
           Container(
             alignment: Alignment.bottomCenter,
             width: MediaQuery.of(context).size.width,
             child: Container(
               padding: const EdgeInsets.only(bottom: 10, top: 10, right: 5),
-              // symmetric(horizontal: 20, vertical: 18),
+              //symmetric(horizontal: 20, vertical: 18),
               width: MediaQuery.of(context).size.width,
               color: Colors.grey[700],
               child: Row(children: [
                 Expanded(
                     child: GestureDetector(
                   child: TextFormField(
-                    onChanged: (value) {
-                      setState(() {});
-                    },
+                    onChanged: (value){
+            setState(() {
+
+            });
+            },
                     controller: messageController,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
                         hintText: "Message...",
                         hintStyle: TextStyle(color: Colors.white, fontSize: 16),
                         border: InputBorder.none,
+                        // suffixIcon: Icon(
+                        //   Icons.camera_alt_outlined,
+                        //   color: Colors.deepOrange,
+                        // ),
                         prefixIcon: InkWell(
                             child: Icon(
                           Icons.emoji_emotions_outlined,
@@ -192,14 +128,14 @@ print("test");
                         ))),
                   ),
                 )),
-                if (messageController.text.isEmpty && imageFileList!.isEmpty)
+                if (messageController.text.isEmpty)
                   Row(
                     children: [
                       IconButton(
                           onPressed: () {
-                            selectImages();
+                            imagegetCamera();
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.camera_alt_outlined,
                             color: Colors.deepOrange,
                           )),
@@ -222,6 +158,7 @@ print("test");
                   Container(
                     child: Row(
                       children: [
+
                         GestureDetector(
                           onTap: () {
                             sendMessage();
@@ -245,7 +182,7 @@ print("test");
                   ),
               ]),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -260,12 +197,13 @@ print("test");
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                      imagemessage: snapshot.data.docs[index]['image'],
-                      time: snapshot.data.docs[index]['time'].toString(),
                       message: snapshot.data.docs[index]['message'],
                       sender: snapshot.data.docs[index]['sender'],
                       sentByMe: widget.userName ==
-                          snapshot.data.docs[index]['sender']);
+                          snapshot.data.docs[index]['sender'],
+                    time:snapshot.data.docs[index]['time'].toString(),
+                    //imagemessage: snapshot.data.docs[index]['image'].toString(),
+                      );
                 },
               )
             : Container();
@@ -278,8 +216,7 @@ print("test");
       Map<String, dynamic> chatMessageMap = {
         "message": messageController.text,
         "sender": widget.userName,
-        "time": DateTime.now().millisecondsSinceEpoch.toString(),
-        "image": "",
+        "time": DateTime.now().millisecondsSinceEpoch,
       };
 
       DatabaseService().sendMessage(widget.groupId, chatMessageMap);
@@ -289,3 +226,7 @@ print("test");
     }
   }
 }
+
+
+
+
