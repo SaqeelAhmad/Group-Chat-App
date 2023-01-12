@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import '../Utility/utility.dart';
 
 class MessageTile extends StatefulWidget {
-  final String time ;
+  final  time ;
   final String message;
   final String sender;
+  final  imagemessage;
   final bool sentByMe;
 
   const MessageTile(
       {Key? key,
-        required this.time,
+       this.time,
       required this.message,
       required this.sender,
+        this.imagemessage,
       required this.sentByMe})
       : super(key: key);
 
@@ -75,6 +77,11 @@ class _MessageTileState extends State<MessageTile> {
                 height: 8,
               ),
 
+            // if (widget.imagemessage.isEmpty  )
+              Text("",style: TextStyle(fontSize: 0.111111111),),
+             //else Container(height: 50,width: 50,color: Colors.blue,),
+
+
               Text(widget.message,
                   textAlign: TextAlign.start,
                   style: const TextStyle(fontSize: 16, color: Colors.white))
@@ -86,3 +93,7 @@ class _MessageTileState extends State<MessageTile> {
   }
   
 }
+
+
+
+
