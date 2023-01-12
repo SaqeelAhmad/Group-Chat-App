@@ -6,6 +6,7 @@ class MessageTile extends StatefulWidget {
   final String time ;
   final String message;
   final String sender;
+  final String imagemessage;
   final bool sentByMe;
 
   const MessageTile(
@@ -13,6 +14,7 @@ class MessageTile extends StatefulWidget {
         required this.time,
       required this.message,
       required this.sender,
+        required this.imagemessage,
       required this.sentByMe})
       : super(key: key);
 
@@ -75,6 +77,10 @@ class _MessageTileState extends State<MessageTile> {
                 height: 8,
               ),
 
+             if (widget.imagemessage.isEmpty  ) Text("",style: TextStyle(fontSize: 0.111111111),)
+             else Container(height: 50,width: 50,color: Colors.blue,),
+
+
               Text(widget.message,
                   textAlign: TextAlign.start,
                   style: const TextStyle(fontSize: 16, color: Colors.white))
@@ -86,3 +92,7 @@ class _MessageTileState extends State<MessageTile> {
   }
   
 }
+
+
+
+
